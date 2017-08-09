@@ -17,7 +17,7 @@
     <!--Text Input Layout Theme-->
     <style name="AppTextInputLayoutTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/color_grey</item>
-        <item name="android:textColorHint">@color/color_white</item>
+        <item name="android:textColorHint">@color/color_grey</item>
     </style>
 
 

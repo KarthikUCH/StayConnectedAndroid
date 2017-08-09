@@ -2,6 +2,7 @@ package com.stay.connected.application;
 
 import com.stay.connected.ui.MainActivity;
 import com.stay.connected.ui.SignInActivity;
+import com.stay.connected.ui.VerifyOtpActivity;
 
 import javax.inject.Singleton;
 
@@ -17,4 +18,6 @@ public interface ApplicationComponent {
     void inject(SignInActivity activity);
 
     void inject(MainActivity activity);
+
+    void inject(VerifyOtpActivity activity);
 }

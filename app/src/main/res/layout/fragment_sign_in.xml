@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,17 +24,18 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_email"
+                android:id="@+id/edt_email"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_email"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,15 +44,16 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_password"
+                android:id="@+id/edt_password"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_password"
+                android:inputType="textPassword"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -70,7 +72,7 @@
             android:background="@drawable/btn_sign_in"
             android:paddingLeft="24dp"
             android:paddingRight="24dp"
-            android:text="@string/text_btn_signin"
+            android:text="@string/text_btn_sign_in"
             android:textColor="@color/color_white" />
 
         <TextView

@@ -10,7 +10,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public interface RestServiceFactory {
 
-    String API_BASE_URL = "";
+    /**
+     * @see <a herf "https://stackoverflow.com/a/5806384/2790197"> Connect to PC Local host</a>
+     */
+    String API_BASE_URL = "http://10.0.2.2:3000";
 
     <T> T create(Class<T> clazz);
 

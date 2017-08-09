@@ -1,22 +1,25 @@
 package com.stay.connected.ui;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.stay.connected.R;
 import com.stay.connected.application.ApplicationComponent;
+import com.stay.connected.network.ResponseListener;
 import com.stay.connected.ui.fragment.RegistrationFragment;
 import com.stay.connected.ui.fragment.SignInFragment;
+
+import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SignInActivity extends InjectableActivity implements RegistrationFragment.OnFragmentInteractionListener, SignInFragment.OnFragmentInteractionListener {
+public class SignInActivity extends InjectableActivity implements RegistrationFragment.OnFragmentRegistrationListener, SignInFragment.OnFragmentSignInListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -48,6 +51,18 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAppController.getUserLogInState()) {
+            startMainActivity(true);
+        } else if (!TextUtils.isEmpty(mAppPreference.getUserEmail())) {
+            if (!mAppPreference.getUserVerificationState()) {
+                startVerifyOtpActivity(true);
+            }
+        }
+    }
+
+    @Override
     void injectComponent(ApplicationComponent component) {
         component.inject(this);
     }
@@ -60,8 +75,7 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
         tvRegister.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.color_grey));
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mSignInFragment);
-        transaction.addToBackStack(null);
+        transaction.replace(R.id.fragment_container, mSignInFragment, SignInFragment.class.getName());
         transaction.commit();
     }
 
@@ -73,13 +87,75 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
         tvRegister.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.color_accent));
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, mRegistrationFragment);
-        transaction.addToBackStack(null);
+        transaction.replace(R.id.fragment_container, mRegistrationFragment, RegistrationFragment.class.getName());
         transaction.commit();
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void signInUser(String email, String password) {
+        mAppController.signInUser(email, password, new UserSignInListner(this));
+    }
 
+    @Override
+    public void registerUser(String name, String email, String mobile, String password) {
+        mAppController.registerUser(name, email, mobile, password, new UserRegistrationListner(this));
+    }
+
+    /**
+     * Listen to user registration request
+     */
+    private static class UserRegistrationListner implements ResponseListener<Boolean> {
+
+        private final WeakReference<SignInActivity> mReference;
+
+        public UserRegistrationListner(SignInActivity activity) {
+            mReference = new WeakReference<SignInActivity>(activity);
+        }
+
+        @Override
+        public void onResponse(Boolean response) {
+            if (mReference.get() != null && response) {
+                mReference.get().startVerifyOtpActivity(true);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
+    }
+
+    /**
+     * Listen to user sign in request
+     */
+    private static class UserSignInListner implements ResponseListener<Boolean> {
+
+        private final WeakReference<SignInActivity> mReference;
+
+        public UserSignInListner(SignInActivity activity) {
+            mReference = new WeakReference<SignInActivity>(activity);
+        }
+
+        @Override
+        public void onResponse(Boolean response) {
+            if (mReference.get() != null && response) {
+                mReference.get().startMainActivity(true);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
     }
 }

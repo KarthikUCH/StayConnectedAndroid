@@ -25,13 +25,25 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    Context providesApplicationContext(){
+    Context providesApplicationContext() {
         return mApp;
     }
 
     @Provides
     @Singleton
-    RestServiceFactory providesRestServiceFactory(){
+    RestServiceFactory providesRestServiceFactory() {
         return new RestServiceFactory.Impl();
+    }
+
+    @Provides
+    @Singleton
+    AppPreference providesAppPreference() {
+        return new AppPreference(mApp);
+    }
+
+    @Provides
+    @Singleton
+    AppController providesAppController(Context context, RestServiceFactory restServiceFactory, AppPreference appPreference) {
+        return new AppController(context, restServiceFactory, appPreference);
     }
 }

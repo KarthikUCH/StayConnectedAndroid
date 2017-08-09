@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,17 +24,18 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_name"
+                android:id="@+id/edt_name"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_name"
+                android:inputType="textVisiblePassword|textNoSuggestions"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,18 +44,19 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_email"
+                android:id="@+id/edt_email"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_email"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
 
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_mobile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,17 +65,18 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_mobile"
+                android:id="@+id/edt_mobile"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_mobile"
+                android:inputType="phone"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.stay.connected.widget.AppTextInputLayout
             android:id="@+id/input_lay_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,15 +85,16 @@
             app:errorEnabled="true">
 
             <EditText
-                android:id="@+id/tv_password"
+                android:id="@+id/edt_password"
                 style="@style/TextAppearance.AppCompat.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/text_user_password"
+                android:inputType="textPassword"
                 android:textColor="@color/color_white"
                 android:theme="@style/AppEditTextTheme" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.stay.connected.widget.AppTextInputLayout>
     </LinearLayout>
 
     <LinearLayout
