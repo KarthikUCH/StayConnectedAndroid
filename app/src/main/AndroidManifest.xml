@@ -3,6 +3,7 @@
     package="com.stay.connected">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".application.StayConnected"
@@ -22,7 +23,10 @@
         <activity android:name=".ui.MainActivity" />
         <activity
             android:name=".ui.VerifyOtpActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ui.ContactsSearchActivity" />
+        <activity android:name=".ui.InviteUserActivity" />
+        <activity android:name=".ui.UploadAvatarActivity"></activity>
     </application>
 
 </manifest>

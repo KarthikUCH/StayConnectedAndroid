@@ -17,13 +17,25 @@
     <string name="text_otp_invalid">Incorrect Code</string>
     <string name="text_otp">OTP</string>
 
-    <!-- BUTTON TESTS-->
+    <!-- USER INVITATION -->
+    <string name="text_invite_user_title">Invite your Companions to\nConnected Life</string>
+    <string name="text_invite_user_name">Name</string>
+    <string name="text_search_contact">SEARCH CONTACTS</string>
+
+    <!-- UPLOAD AVATAR -->
+    <string name="text_avatar_upload_title">Account Created!\nAdd your Profile Photo</string>
+    <string name="text_avatar_update">UPDATE PHOTO</string>
+
+    <!-- BUTTON TEXTS-->
     <string name="text_btn_sign_in">Sign In</string>
     <string name="text_btn_register">Register</string>
     <string name="text_btn_resend_otp">Resend code</string>
     <string name="text_btn_verify_otp">Verify</string>
+    <string name="text_btn_invite">Invite</string>
+    <string name="text_btn_next">Next</string>
 
     <!-- VALIDATION TEXTS-->
+    <string name="text_empty_field">Empty Field</string>
     <string name="text_invalid_user_name">Invalid name</string>
     <string name="text_invalid_user_email">Invalid Email</string>
     <string name="text_invalid_user_number">Invalid Number</string>

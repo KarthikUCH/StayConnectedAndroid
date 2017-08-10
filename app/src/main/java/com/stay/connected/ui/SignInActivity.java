@@ -54,7 +54,7 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     protected void onResume() {
         super.onResume();
         if (mAppController.getUserLogInState()) {
-            startMainActivity(true);
+            startInviteUeserActivity(true);
         } else if (!TextUtils.isEmpty(mAppPreference.getUserEmail())) {
             if (!mAppPreference.getUserVerificationState()) {
                 startVerifyOtpActivity(true);
@@ -93,7 +93,7 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
     @Override
     public void signInUser(String email, String password) {
-        mAppController.signInUser(email, password, new UserSignInListner(this));
+        mAppController.signInUser(email, password, new UserSignInListener(this));
     }
 
     @Override
@@ -133,18 +133,18 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     /**
      * Listen to user sign in request
      */
-    private static class UserSignInListner implements ResponseListener<Boolean> {
+    private static class UserSignInListener implements ResponseListener<Boolean> {
 
         private final WeakReference<SignInActivity> mReference;
 
-        public UserSignInListner(SignInActivity activity) {
+        public UserSignInListener(SignInActivity activity) {
             mReference = new WeakReference<SignInActivity>(activity);
         }
 
         @Override
         public void onResponse(Boolean response) {
             if (mReference.get() != null && response) {
-                mReference.get().startMainActivity(true);
+                mReference.get().startInviteUeserActivity(true);
             }
         }
 

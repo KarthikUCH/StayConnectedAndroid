@@ -1,6 +1,7 @@
 package com.stay.connected.application;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.stay.connected.network.ResponseListener;
@@ -9,9 +10,14 @@ import com.stay.connected.network.StayConnectedService;
 import com.stay.connected.network.model.RegistrationRequest;
 import com.stay.connected.network.model.SignInRequest;
 import com.stay.connected.network.model.VerifyOtpRequest;
+import com.stay.connected.util.ImageUtil;
 
+import java.io.File;
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -236,5 +242,63 @@ public class AppController {
                             listener.onCompleted();
                         });
 
+    }
+
+    /**
+     * To upload user avatar
+     *
+     * @param avatarBmp
+     * @param email
+     * @param listener
+     */
+    public void uploadAvatar(Bitmap avatarBmp, String email, ResponseListener<Boolean> listener) {
+
+        Observable.defer(() -> Observable.just(storeAvatar(avatarBmp, email)))
+                .map(filePath -> {
+                    try {
+                        File file = new File(ImageUtil.storeAvatar(mContext, avatarBmp, "karthikeyan027@gmail.com"));
+
+                        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                        MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), requestFile);
+
+                        RequestBody fullName = RequestBody.create(MediaType.parse("multipart/form-data"), email);
+
+                        Call<ResponseBody> requestCall = mClientService.updateAvatar(body, fullName);
+                        Response<ResponseBody> response = requestCall.execute();
+                        if (response.code() == 200) {
+                            userLogInState = true;
+                            Log.d(TAG, "Upload avatar success");
+                            return true;
+                        } else {
+                            userLogInState = true;
+                            Log.i(TAG, "Upload avatar failed:  Server Error Code " + response.code());
+                            return false;
+
+                        }
+                    } catch (IOException e) {
+                        userLogInState = true;
+                        Log.e(TAG, "Upload avatar error " + e.getMessage());
+                        return false;
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                            Log.i(TAG, "onNext");
+                            listener.onResponse(result);
+                        },
+                        throwable -> {
+                            Log.e(TAG, "onError", throwable);
+                            listener.onError(throwable != null ? throwable.getMessage() : "");
+                        },
+                        () -> {
+                            Log.i(TAG, "onCompleted");
+                            listener.onCompleted();
+                        });
+
+    }
+
+    private String storeAvatar(Bitmap avatarBmp, String email) {
+        return ImageUtil.storeAvatar(mContext, avatarBmp, email);
     }
 }

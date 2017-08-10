@@ -60,4 +60,22 @@ public abstract class InjectableActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    protected void startInviteUeserActivity(boolean finish) {
+        Intent intent = new Intent(this, InviteUserActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        if (finish) {
+            finish();
+        }
+    }
+
+    protected void startContactsSearchActivity(boolean finish) {
+        Intent intent = new Intent(this, ContactsSearchActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        if (finish) {
+            finish();
+        }
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,7 +94,7 @@ public class RegistrationFragment extends Fragment {
         String mobile = edtMobile.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
-        if (name.length() == 0) {
+        if (TextUtils.isEmpty(name)) {
             inputLayName.setError(getResources().getString(R.string.text_invalid_user_name));
             edtName.requestFocus();
             validationSuccess = false;

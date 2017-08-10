@@ -33,7 +33,7 @@ dependencies {
 
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
-
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     // Dagger Library
     compile "com.google.dagger:dagger:$rootProject.DaggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.DaggerVersion"
@@ -52,6 +52,9 @@ dependencies {
     // Butter Knife
     compile "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
+
+    // extracting file metadata libs
+    compile "com.drewnoakes:metadata-extractor:$metadataExtractorVersion"
 
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
     testCompile 'junit:junit:4.12'

@@ -1,7 +1,10 @@
 package com.stay.connected.application;
 
+import com.stay.connected.ui.ContactsSearchActivity;
+import com.stay.connected.ui.InviteUserActivity;
 import com.stay.connected.ui.MainActivity;
 import com.stay.connected.ui.SignInActivity;
+import com.stay.connected.ui.UploadAvatarActivity;
 import com.stay.connected.ui.VerifyOtpActivity;
 
 import javax.inject.Singleton;
@@ -20,4 +23,11 @@ public interface ApplicationComponent {
     void inject(MainActivity activity);
 
     void inject(VerifyOtpActivity activity);
+
+    void inject(ContactsSearchActivity activity);
+
+    void inject(InviteUserActivity activity);
+
+    void inject(UploadAvatarActivity activity);
+
 }
