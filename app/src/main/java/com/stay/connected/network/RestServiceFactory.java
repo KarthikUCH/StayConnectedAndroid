@@ -15,13 +15,13 @@ public interface RestServiceFactory {
      */
 
 
-    <T> T create(Class<T> clazz, String url);
+    <T> T create(Class<T> clazz, String url) throws Exception;
 
     class Impl implements RestServiceFactory {
 
 
         @Override
-        public <T> T create(Class<T> clazz, String url) {
+        public <T> T create(Class<T> clazz, String url) throws Exception {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
             Retrofit.Builder builder = new Retrofit.Builder()

@@ -50,7 +50,11 @@ public class AppController {
     public void updateRestServiceFactory() {
         String url = mAppPreference.getAppUrl();
         if (!TextUtils.isEmpty(url)) {
-            mClientService = mRestServiceFactory.create(StayConnectedService.class, url);
+            try {
+                mClientService = mRestServiceFactory.create(StayConnectedService.class, url);
+            } catch (Exception e) {
+                mAppPreference.setAppUrl("");
+            }
         }
     }
 

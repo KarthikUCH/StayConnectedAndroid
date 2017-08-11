@@ -12,7 +12,7 @@ public class AppPreference {
     private static final String TAG = AppPreference.class.getName();
 
     // USER DETAILS
-    private static final String PARAM_APP_URL = "user_name";
+    private static final String PARAM_APP_URL = "app_url";
     private static final String PARAM_USER_NAME = "user_name";
     private static final String PARAM_USER_EMAIL = "user_email";
     private static final String PARAM_IS_USER_VERIFIED = "is_user_verified";
