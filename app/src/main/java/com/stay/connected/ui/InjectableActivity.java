@@ -204,11 +204,19 @@ public abstract class InjectableActivity extends AppCompatActivity {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this, R.style.AppDialogTheme);
         final EditText input = new EditText(this);
+        input.setText(mAppPreference.getAppUrl());
+        input.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.color_grey_dark));
         dialogBuilder.setMessage("Add the URL")
                 .setView(input)
+                .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.text_btn_ok), (dialog, which) -> {
                     if (dialog != null) {
-                        dialog.dismiss();
+                        String url = input.getText().toString().trim();
+                        if (!TextUtils.isEmpty(url)) {
+                            mAppPreference.setAppUrl(url);
+                            mAppController.updateRestServiceFactory();
+                            dialog.dismiss();
+                        }
                     }
                 });
         dialog = dialogBuilder.create();

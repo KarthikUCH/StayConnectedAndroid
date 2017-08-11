@@ -93,9 +93,12 @@ public class RegistrationFragment extends Fragment {
     public void onRegisterClick() {
         boolean validationSuccess = true;
         inputLayName.setError(null);
+        inputLayName.setErrorEnabled(false);
         inputLayEmail.setError(null);
+        inputLayEmail.setErrorEnabled(false);
         phoneEditText.setError(null);
         inputLayPassword.setError(null);
+        inputLayPassword.setErrorEnabled(false);
 
         String name = edtName.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();

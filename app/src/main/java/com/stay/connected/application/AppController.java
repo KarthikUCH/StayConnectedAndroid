@@ -2,6 +2,7 @@ package com.stay.connected.application;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.stay.connected.network.ResponseListener;
@@ -13,7 +14,6 @@ import com.stay.connected.network.model.VerifyOtpRequest;
 import com.stay.connected.util.ImageUtil;
 
 import java.io.File;
-import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -37,15 +37,22 @@ public class AppController {
     private AppPreference mAppPreference;
     private boolean userLogInState = false;
 
-    private final StayConnectedService mClientService;
+    private StayConnectedService mClientService;
 
     public AppController(Context mContext, RestServiceFactory mRestServiceFactory, AppPreference appPreference) {
         this.mContext = mContext;
         this.mRestServiceFactory = mRestServiceFactory;
         this.mAppPreference = appPreference;
-        mClientService = mRestServiceFactory.create(StayConnectedService.class);
+        updateRestServiceFactory();
     }
 
+
+    public void updateRestServiceFactory() {
+        String url = mAppPreference.getAppUrl();
+        if (!TextUtils.isEmpty(url)) {
+            mClientService = mRestServiceFactory.create(StayConnectedService.class, url);
+        }
+    }
 
     public boolean getUserLogInState() {
         return userLogInState;
@@ -81,7 +88,7 @@ public class AppController {
                             Log.i(TAG, "User registration failed:  Server Error Code " + response.code());
                             return response.code();
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Log.e(TAG, "User registration error " + e.getMessage());
                         return -1;
                     }
@@ -129,7 +136,7 @@ public class AppController {
                             return response.code();
 
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         mAppPreference.setUserVerificationState(false);
                         Log.e(TAG, "Otp verification error " + e.getMessage());
                         return -1;
@@ -174,7 +181,7 @@ public class AppController {
                             return response.code();
                         }
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         Log.e(TAG, "Otp resend error " + e.getMessage());
                         return -1;
                     }
@@ -219,13 +226,13 @@ public class AppController {
                             Log.d(TAG, "User login success");
                             return response.code();
                         } else {
-                            userLogInState = true;
+                            userLogInState = false;
                             Log.i(TAG, "User login failed:  Server Error Code " + response.code());
                             return response.code();
 
                         }
-                    } catch (IOException e) {
-                        userLogInState = true;
+                    } catch (Exception e) {
+                        userLogInState = false;
                         Log.e(TAG, "User login error " + e.getMessage());
                         return -1;
                     }
@@ -270,17 +277,14 @@ public class AppController {
                         Call<ResponseBody> requestCall = mClientService.updateAvatar(body, fullName);
                         Response<ResponseBody> response = requestCall.execute();
                         if (response.code() == 200) {
-                            userLogInState = true;
                             Log.d(TAG, "Upload avatar success");
                             return true;
                         } else {
-                            userLogInState = true;
                             Log.i(TAG, "Upload avatar failed:  Server Error Code " + response.code());
                             return false;
 
                         }
-                    } catch (IOException e) {
-                        userLogInState = true;
+                    } catch (Exception e) {
                         Log.e(TAG, "Upload avatar error " + e.getMessage());
                         return false;
                     }

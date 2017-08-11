@@ -70,7 +70,9 @@ public class SignInFragment extends Fragment {
     @OnClick(R.id.btn_sign_in)
     public void onSignInClick() {
         inputLayEmail.setError(null);
+        inputLayEmail.setErrorEnabled(false);
         inputLayPassword.setError(null);
+        inputLayPassword.setErrorEnabled(false);
 
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();

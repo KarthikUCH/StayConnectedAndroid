@@ -99,7 +99,9 @@ public class InviteUserActivity extends InjectableActivity {
 
         boolean validationSuccess = true;
         inputLayName.setError(null);
+        inputLayName.setErrorEnabled(false);
         inputLayMobile.setError(null);
+        inputLayMobile.setErrorEnabled(false);
 
         String name = edtName.getText().toString().trim();
         String mobile = edtMobile.getText().toString().trim();

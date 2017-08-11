@@ -13,17 +13,19 @@ public interface RestServiceFactory {
     /**
      * @see <a herf "https://stackoverflow.com/a/5806384/2790197"> Connect to PC Local host</a>
      */
-    String API_BASE_URL = "http://c9c15ac3.ngrok.io";
 
-    <T> T create(Class<T> clazz);
+
+    <T> T create(Class<T> clazz, String url);
 
     class Impl implements RestServiceFactory {
+
+
         @Override
-        public <T> T create(Class<T> clazz) {
+        public <T> T create(Class<T> clazz, String url) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
             Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl(API_BASE_URL)
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create());
 
             Retrofit retrofit = builder

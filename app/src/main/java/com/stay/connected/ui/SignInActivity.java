@@ -62,7 +62,9 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     @Override
     protected void onResume() {
         super.onResume();
-        if (mAppController.getUserLogInState()) {
+        if (TextUtils.isEmpty(mAppPreference.getAppUrl())) {
+            showUrlAlertDialog();
+        } else if (mAppController.getUserLogInState()) {
             startInviteUserActivity(true);
         } else if (!TextUtils.isEmpty(mAppPreference.getUserEmail())) {
             if (!mAppPreference.getUserVerificationState()) {
@@ -122,6 +124,10 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
     @Override
     public void signInUser(String email, String password) {
+        if (TextUtils.isEmpty(mAppPreference.getAppUrl())) {
+            showUrlAlertDialog();
+            return;
+        }
         mActivityState = ActivityState.SIGNING_IN;
         showProgressDialog(null, false);
         mAppController.signInUser(email, password, new UserSignInListener(this));
@@ -129,6 +135,10 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
     @Override
     public void registerUser(String name, String email, String mobile, String password) {
+        if (TextUtils.isEmpty(mAppPreference.getAppUrl())) {
+            showUrlAlertDialog();
+            return;
+        }
         mActivityState = ActivityState.REGISTERING;
         showProgressDialog(null, false);
         mAppController.registerUser(name, email, mobile, password, new UserRegistrationListener(this));
