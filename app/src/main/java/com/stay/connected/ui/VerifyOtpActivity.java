@@ -160,7 +160,7 @@ public class VerifyOtpActivity extends InjectableActivity {
                         break;
                     case 400:
                     default:
-                        mReference.get().showAlertDialog(R.string.text_alert_verify_otp_error);
+                        mReference.get().showAlertDialog(R.string.text_alert_resend_otp_error);
                         break;
                 }
             }

@@ -53,6 +53,7 @@
     <string name="text_alert_user_registered_already">User already registered with this email id or mobile number</string>
     <string name="text_alert_user_registration_error">Error registering user. Please try again later.</string>
     <string name="text_alert_verify_otp_error">Error verifying OTP. Please click on RESEND CODE and try again.</string>
+    <string name="text_alert_resend_otp_error">Error resending OTP. Please click on RESEND CODE and try again.</string>
     <string name="text_alert_otp_resend_success">OTP will be send to registered mobile number.</string>
     <string name="text_alert_user_login_error">Error signin user. Please try again later.</string>
     <string name="text_alert_user_need_contact_permission">App need permission to access the phone contacts</string>

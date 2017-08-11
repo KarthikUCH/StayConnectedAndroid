@@ -210,11 +210,11 @@ public abstract class InjectableActivity extends AppCompatActivity {
                 .setView(input)
                 .setCancelable(false)
                 .setPositiveButton(getResources().getString(R.string.text_btn_ok), (dialog, which) -> {
-                    if (dialog != null) {
-                        String url = input.getText().toString().trim();
-                        if (!TextUtils.isEmpty(url)) {
-                            mAppPreference.setAppUrl(url);
-                            mAppController.updateRestServiceFactory();
+                    String url = input.getText().toString().trim();
+                    if (!TextUtils.isEmpty(url)) {
+                        mAppPreference.setAppUrl(url);
+                        mAppController.updateRestServiceFactory();
+                        if (dialog != null) {
                             dialog.dismiss();
                         }
                     }
