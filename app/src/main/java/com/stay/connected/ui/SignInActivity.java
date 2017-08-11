@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.stay.connected.R;
@@ -32,6 +34,13 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
     private SignInFragment mSignInFragment;
     private RegistrationFragment mRegistrationFragment;
+    private static ActivityState mActivityState = ActivityState.INACTIVE;
+
+    private enum ActivityState {
+        REGISTERING,
+        SIGNING_IN,
+        INACTIVE
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +63,15 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     protected void onResume() {
         super.onResume();
         if (mAppController.getUserLogInState()) {
-            startInviteUeserActivity(true);
+            startInviteUserActivity(true);
         } else if (!TextUtils.isEmpty(mAppPreference.getUserEmail())) {
             if (!mAppPreference.getUserVerificationState()) {
                 startVerifyOtpActivity(true);
             }
+        }
+
+        if (mActivityState != ActivityState.INACTIVE) {
+            showProgressDialog(null, false);
         }
     }
 
@@ -67,6 +80,22 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
         component.inject(this);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.url_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        } else if (item.getItemId() == R.id.menu_url) {
+            showUrlAlertDialog();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @OnClick(R.id.tv_sing_in)
     public void showSignInFragment() {
@@ -93,29 +122,53 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
     @Override
     public void signInUser(String email, String password) {
+        mActivityState = ActivityState.SIGNING_IN;
+        showProgressDialog(null, false);
         mAppController.signInUser(email, password, new UserSignInListener(this));
     }
 
     @Override
     public void registerUser(String name, String email, String mobile, String password) {
-        mAppController.registerUser(name, email, mobile, password, new UserRegistrationListner(this));
+        mActivityState = ActivityState.REGISTERING;
+        showProgressDialog(null, false);
+        mAppController.registerUser(name, email, mobile, password, new UserRegistrationListener(this));
+    }
+
+    public void setSignInError(int errorCode) {
+
+        SignInFragment fragment = (SignInFragment) getSupportFragmentManager().findFragmentByTag(SignInFragment.class.getName());
+        if (fragment != null) {
+            fragment.setError(errorCode);
+        }
+
     }
 
     /**
      * Listen to user registration request
      */
-    private static class UserRegistrationListner implements ResponseListener<Boolean> {
+    private static class UserRegistrationListener implements ResponseListener<Integer> {
 
         private final WeakReference<SignInActivity> mReference;
 
-        public UserRegistrationListner(SignInActivity activity) {
+        public UserRegistrationListener(SignInActivity activity) {
             mReference = new WeakReference<SignInActivity>(activity);
         }
 
         @Override
-        public void onResponse(Boolean response) {
-            if (mReference.get() != null && response) {
-                mReference.get().startVerifyOtpActivity(true);
+        public void onResponse(Integer responseCode) {
+            if (mReference.get() != null) {
+                switch (responseCode) {
+                    case 200:
+                        mReference.get().startVerifyOtpActivity(true);
+                        break;
+                    case 409:
+                        mReference.get().showAlertDialog(R.string.text_alert_user_registered_already);
+                        break;
+                    case 400:
+                    default:
+                        mReference.get().showAlertDialog(R.string.text_alert_user_registration_error);
+                        break;
+                }
             }
         }
 
@@ -126,14 +179,17 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
         @Override
         public void onCompleted() {
-
+            mActivityState = ActivityState.INACTIVE;
+            if (mReference.get() != null) {
+                mReference.get().dismissProgressDialog(null);
+            }
         }
     }
 
     /**
      * Listen to user sign in request
      */
-    private static class UserSignInListener implements ResponseListener<Boolean> {
+    private static class UserSignInListener implements ResponseListener<Integer> {
 
         private final WeakReference<SignInActivity> mReference;
 
@@ -142,9 +198,21 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
         }
 
         @Override
-        public void onResponse(Boolean response) {
-            if (mReference.get() != null && response) {
-                mReference.get().startInviteUeserActivity(true);
+        public void onResponse(Integer responseCode) {
+            if (mReference.get() != null) {
+                switch (responseCode) {
+                    case 200:
+                        mReference.get().startInviteUserActivity(true);
+                        break;
+                    case 401:
+                    case 404:
+                        mReference.get().setSignInError(responseCode);
+                        break;
+                    case 400:
+                    default:
+                        mReference.get().showAlertDialog(R.string.text_alert_user_login_error);
+                        break;
+                }
             }
         }
 
@@ -155,7 +223,10 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
         @Override
         public void onCompleted() {
-
+            mActivityState = ActivityState.INACTIVE;
+            if (mReference.get() != null) {
+                mReference.get().dismissProgressDialog(null);
+            }
         }
     }
 }

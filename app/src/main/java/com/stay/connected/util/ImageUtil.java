@@ -125,4 +125,10 @@ public class ImageUtil {
             return  filePath;
         }
     }
+
+    public static boolean isUserAvatarExists(Context context, String email){
+        String filePath = context.getFilesDir()+"/"+email+"dfs";
+        File file = new File(filePath);
+        return file.exists();
+    }
 }

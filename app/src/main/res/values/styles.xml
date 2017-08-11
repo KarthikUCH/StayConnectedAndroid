@@ -10,22 +10,30 @@
         <item name="android:textColorSecondary">@color/color_white</item>
     </style>
 
-    <!-- App Theme-->
+    <!-- App Theme -->
     <style name="AppTheme" parent="AppTheme.Base"></style>
 
 
-    <!--Text Input Layout Theme-->
+    <!-- Text Input Layout Theme -->
     <style name="AppTextInputLayoutTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/color_grey</item>
         <item name="android:textColorHint">@color/color_grey</item>
     </style>
 
 
-    <!--Edit Text Theme-->
+    <!-- Edit Text Theme -->
     <style name="AppEditTextTheme" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/color_accent</item>
         <item name="colorControlActivated">@color/color_accent</item>
         <item name="colorControlHighlight">@color/color_accent</item>
+    </style>
+
+    <!-- Alert Dialog Theme -->
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!--buttons color-->
+        <item name="colorAccent">@color/color_accent</item>
+        <!--title and message color-->
+        <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
 </resources>

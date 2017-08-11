@@ -12,10 +12,7 @@ import com.stay.connected.contacts.Contact;
 import com.stay.connected.contacts.ContactsProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,18 +25,27 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     String sample = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private final List<Contact> mContactsList;
-    private final List<String> index = new ArrayList<>();
-
-    public ContactsListAdapter(Context context) {
-        this.mContactsList = ContactsProvider.load(context);
-        fillSections();
+    public interface ContactClickListener {
+        void onContactClick(Contact contact);
     }
 
-    private void fillSections() {
+    private final List<Contact> mContactList;
+    private List<Contact> mDisplayContactList = new ArrayList<>();
+    private final ContactClickListener mClickListener;
+    private String oldSearchQuery = "";
 
-        for (int x = 0; x < mContactsList.size(); x++) {
-            String contact = mContactsList.get(x).getName();
+    public ContactsListAdapter(Context context, ContactClickListener clickListener) {
+        mContactList = ContactsProvider.load(context);
+        this.mDisplayContactList.addAll(mContactList);
+        this.mClickListener = clickListener;
+        fillSections(mDisplayContactList);
+    }
+
+    private void fillSections(List<Contact> list) {
+
+        List<String> index = new ArrayList<>();
+        for (int x = 0; x < list.size(); x++) {
+            String contact = list.get(x).getName();
             if (contact.length() > 0) {
                 String ch = String.valueOf(contact.charAt(0));
                 ch = ch.toUpperCase();
@@ -47,12 +53,12 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if (!sample.contains(ch)) {
                     if (!index.contains("#")) {
                         index.add("#");
-                        mContactsList.add(x, new Contact("#", Contact.TYPE_CONTACT_HEADER));
+                        list.add(x, new Contact("-1", "#", Contact.TYPE_CONTACT_HEADER));
                         x++;
                     }
                 } else if (!index.contains(ch)) {
                     index.add(ch);
-                    mContactsList.add(x, new Contact(ch, Contact.TYPE_CONTACT_HEADER));
+                    list.add(x, new Contact("-1", ch, Contact.TYPE_CONTACT_HEADER));
                     x++;
                 }
             }
@@ -61,7 +67,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        return mContactsList.get(position).getType();
+        return mDisplayContactList.get(position).getType();
     }
 
     @Override
@@ -80,7 +86,7 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        switch (mContactsList.get(position).getType()) {
+        switch (mDisplayContactList.get(position).getType()) {
             case Contact.TYPE_CONTACT_HEADER:
                 ContactsHeaderViewHolder contactsHeaderViewHolder = (ContactsHeaderViewHolder) holder;
                 onBindContactHeaderViewHolder(contactsHeaderViewHolder, position);
@@ -93,16 +99,17 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     void onBindContactHeaderViewHolder(ContactsHeaderViewHolder holder, int position) {
-        holder.tvName.setText(mContactsList.get(position).getName());
+        holder.tvName.setText(mDisplayContactList.get(position).getName());
     }
 
     void onBindContactViewHolder(ContactsViewHolder holder, int position) {
-        holder.tvName.setText(mContactsList.get(position).getName());
+        holder.itemView.setOnClickListener(v -> mClickListener.onContactClick(mDisplayContactList.get(position)));
+        holder.tvName.setText(mDisplayContactList.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return mContactsList.size();
+        return mDisplayContactList.size();
     }
 
     class ContactsViewHolder extends RecyclerView.ViewHolder {
@@ -125,5 +132,39 @@ public class ContactsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public void doSearch(String query) {
+        if (query.trim().length() == 0 && oldSearchQuery.length() == 0) {
+            closeSearch();
+        }
+        List<Contact> filteredContacts = new ArrayList();
+        List<Contact> searchFromList;
+        query = query.trim().toLowerCase();
+        if (oldSearchQuery.length() > 0 && query.contains(oldSearchQuery)) {
+            searchFromList = mDisplayContactList;
+        } else {
+            searchFromList = mContactList;
+        }
+
+        oldSearchQuery = query;
+        for (Contact contact : searchFromList) {
+            final String text = contact.getName().toLowerCase();
+            if (text.contains(query) && contact.getType() == Contact.TYPE_CONTACT) {
+                filteredContacts.add(contact);
+            }
+        }
+
+        fillSections(filteredContacts);
+        mDisplayContactList.clear();
+        mDisplayContactList.addAll(filteredContacts);
+        notifyDataSetChanged();
+    }
+
+    public void closeSearch() {
+        mDisplayContactList.clear();
+        mDisplayContactList.addAll(mContactList);
+        fillSections(mDisplayContactList);
+        notifyDataSetChanged();
     }
 }

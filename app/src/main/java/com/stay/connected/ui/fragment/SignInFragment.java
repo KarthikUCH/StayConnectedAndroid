@@ -69,6 +69,8 @@ public class SignInFragment extends Fragment {
 
     @OnClick(R.id.btn_sign_in)
     public void onSignInClick() {
+        inputLayEmail.setError(null);
+        inputLayPassword.setError(null);
 
         String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
@@ -101,6 +103,18 @@ public class SignInFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void setError(int errorCode) {
+        switch (errorCode) {
+            case 401:
+                inputLayPassword.setError(getResources().getString(R.string.text_invalid_user_password));
+                break;
+            case 404:
+                inputLayEmail.setError(getResources().getString(R.string.text_user_acc_not_found));
+                break;
+
+        }
     }
 
     /**

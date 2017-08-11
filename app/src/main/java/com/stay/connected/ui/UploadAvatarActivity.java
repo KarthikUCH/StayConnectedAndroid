@@ -6,7 +6,9 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.stay.connected.R;
 import com.stay.connected.application.ApplicationComponent;
@@ -22,7 +24,7 @@ import butterknife.OnClick;
 
 public class UploadAvatarActivity extends InjectableActivity {
 
-    protected static final int REQUEST_GET_IMAGE_GALLERY = 0x00000003;
+    protected static final int REQUEST_GET_IMAGE_GALLERY = 0x00000001;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -45,6 +47,14 @@ public class UploadAvatarActivity extends InjectableActivity {
     @Override
     void injectComponent(ApplicationComponent component) {
         component.inject(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -72,8 +82,33 @@ public class UploadAvatarActivity extends InjectableActivity {
         }
     }
 
+    @OnClick(R.id.btn_next)
+    public void onClickNext() {
+        if (isUserAvaratExists()) {
+            onBackPressed();
+        } else {
+            ChooseImage();
+        }
+    }
+
+    @OnClick(R.id.tv_skip_now)
+    public void onClickSkipNow() {
+        onBackPressed();
+    }
+
+
+    @OnClick(R.id.img_avatar)
+    public void onClickAvatar() {
+        ChooseImage();
+    }
+
     @OnClick(R.id.btn_update_avatar)
     public void onClickUpdateAvatar() {
+        ChooseImage();
+    }
+
+    private void ChooseImage() {
+
         if (isFinishing()) {
             return;
         }
@@ -104,7 +139,7 @@ public class UploadAvatarActivity extends InjectableActivity {
         @Override
         public void onResponse(Boolean response) {
             if (mReference.get() != null && response) {
-                mReference.get().finish();
+                mReference.get().showSuccess();
             }
         }
 
@@ -117,5 +152,9 @@ public class UploadAvatarActivity extends InjectableActivity {
         public void onCompleted() {
 
         }
+    }
+
+    private void showSuccess() {
+        Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
     }
 }

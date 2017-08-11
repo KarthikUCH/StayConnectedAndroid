@@ -3,30 +3,34 @@ package com.stay.connected.contacts;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Created by Alexandr Timoshenko <thick.tav@gmail.com> on 11/13/15.
- */
+
 public class ContactsProvider {
-    public static List<Contact> load(Context pContext) {
+    public static List<Contact> load(Context context) {
         List<Contact> contacts = new ArrayList<>();
-        Cursor c = null;
+        Cursor cursor = null;
         try {
-            c = pContext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-            while (c.moveToNext()) {
-                String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                int hasNumber = c.getInt(c.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+            cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            while (cursor.moveToNext()) {
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                int hasNumber = cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
                 if (hasNumber > 0) {
-                    contacts.add(new Contact(name, Contact.TYPE_CONTACT));
+                    contacts.add(new Contact(id, name, Contact.TYPE_CONTACT));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
         }
         Collections.sort(contacts, new Comparator<Contact>() {
             @Override
@@ -35,5 +39,19 @@ public class ContactsProvider {
             }
         });
         return contacts;
+    }
+
+    public static Contact getContactNumber(Context context, Contact contact) {
+        String number = null;
+        Cursor cursor = context.getContentResolver().query(Phone.CONTENT_URI, null,
+                Phone.CONTACT_ID + " =? ", new String[]{contact.getContactId()}, null);
+        if (cursor.moveToFirst()) {
+            number = cursor.getString(cursor.getColumnIndex(Phone.NUMBER));
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        contact.setNumber(number);
+        return contact;
     }
 }

@@ -60,7 +60,7 @@ public class AppController {
      * @param password
      * @param listener
      */
-    public void registerUser(String name, String email, String mobile, String password, ResponseListener<Boolean> listener) {
+    public void registerUser(String name, String email, String mobile, String password, ResponseListener<Integer> listener) {
 
         RegistrationRequest requestBody = new RegistrationRequest(name, email, mobile, password);
         Observable.defer(() -> Observable.just(requestBody))
@@ -74,23 +74,24 @@ public class AppController {
 
                             // reset the user verification state for every registration
                             mAppPreference.setUserVerificationState(false);
+                            userLogInState = false;
                             Log.d(TAG, "User registration success");
-                            return true;
+                            return response.code();
                         } else {
                             Log.i(TAG, "User registration failed:  Server Error Code " + response.code());
-                            return false;
+                            return response.code();
                         }
                     } catch (IOException e) {
                         Log.e(TAG, "User registration error " + e.getMessage());
-                        return false;
+                        return -1;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        result -> {
+                        resultCode -> {
                             Log.i(TAG, "onNext");
-                            listener.onResponse(result);
+                            listener.onResponse(resultCode);
                         },
                         throwable -> {
                             Log.e(TAG, "onError", throwable);
@@ -110,7 +111,7 @@ public class AppController {
      * @param otp
      * @param listener
      */
-    public void verifyOTP(String email, String otp, ResponseListener<Boolean> listener) {
+    public void verifyOTP(String email, String otp, ResponseListener<Integer> listener) {
 
         VerifyOtpRequest requestBody = new VerifyOtpRequest(email, otp);
         Observable.defer(() -> Observable.just(requestBody))
@@ -121,25 +122,25 @@ public class AppController {
                         if (response.code() == 200) {
                             mAppPreference.setUserVerificationState(true);
                             Log.d(TAG, "Otp verification success");
-                            return true;
+                            return response.code();
                         } else {
                             mAppPreference.setUserVerificationState(false);
                             Log.i(TAG, "Otp verification failed:  Server Error Code " + response.code());
-                            return false;
+                            return response.code();
 
                         }
                     } catch (IOException e) {
                         mAppPreference.setUserVerificationState(false);
                         Log.e(TAG, "Otp verification error " + e.getMessage());
-                        return false;
+                        return -1;
                     }
 
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+                .subscribe(resultCode -> {
                             Log.i(TAG, "onNext");
-                            listener.onResponse(result);
+                            listener.onResponse(resultCode);
                         },
                         throwable -> {
                             Log.e(TAG, "onError", throwable);
@@ -159,7 +160,7 @@ public class AppController {
      * @param email
      * @param listener
      */
-    public void resendOtp(String email, ResponseListener<Boolean> listener) {
+    public void resendOtp(String email, ResponseListener<Integer> listener) {
         Observable.defer(() -> Observable.just(email))
                 .map(emailId -> {
                     try {
@@ -167,21 +168,22 @@ public class AppController {
                         Response<ResponseBody> response = requestBody.execute();
                         if (response.code() == 200) {
                             Log.d(TAG, "Otp resend success");
-                            return true;
+                            return response.code();
                         } else {
                             Log.i(TAG, "Otp resend failed:  Server Error Code " + response.code());
-                            return false;
+                            return response.code();
                         }
 
                     } catch (IOException e) {
-                        return false;
+                        Log.e(TAG, "Otp resend error " + e.getMessage());
+                        return -1;
                     }
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+                .subscribe(resultCode -> {
                             Log.i(TAG, "onNext");
-                            listener.onResponse(result);
+                            listener.onResponse(resultCode);
                         },
                         throwable -> {
                             Log.e(TAG, "onError", throwable);
@@ -202,7 +204,7 @@ public class AppController {
      * @param password
      * @param listener
      */
-    public void signInUser(String email, String password, ResponseListener<Boolean> listener) {
+    public void signInUser(String email, String password, ResponseListener<Integer> listener) {
 
         SignInRequest requestBody = new SignInRequest(email, password);
         Observable.defer(() -> Observable.just(requestBody))
@@ -211,27 +213,29 @@ public class AppController {
                         Call<ResponseBody> requestCall = mClientService.doSignIn(signInRequest);
                         Response<ResponseBody> response = requestCall.execute();
                         if (response.code() == 200) {
+                            //TODO : Check for previous logged in user first
+                            mAppPreference.setUserEmail(email);
                             userLogInState = true;
                             Log.d(TAG, "User login success");
-                            return true;
+                            return response.code();
                         } else {
                             userLogInState = true;
                             Log.i(TAG, "User login failed:  Server Error Code " + response.code());
-                            return false;
+                            return response.code();
 
                         }
                     } catch (IOException e) {
                         userLogInState = true;
                         Log.e(TAG, "User login error " + e.getMessage());
-                        return false;
+                        return -1;
                     }
 
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+                .subscribe(resultCode -> {
                             Log.i(TAG, "onNext");
-                            listener.onResponse(result);
+                            listener.onResponse(resultCode);
                         },
                         throwable -> {
                             Log.e(TAG, "onError", throwable);

@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.lamudi.phonefield.PhoneInputLayout;
 import com.stay.connected.R;
 import com.stay.connected.util.AppUtil;
+import com.stay.connected.widget.PhoneNumberLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,10 +43,10 @@ public class RegistrationFragment extends Fragment {
     EditText edtEmail;
 
     @BindView(R.id.input_lay_mobile)
-    TextInputLayout inputLayMobile;
+    PhoneNumberLayout phoneEditText;
 
-    @BindView(R.id.edt_mobile)
-    EditText edtMobile;
+    /*@BindView(R.id.edt_mobile)
+    EditText edtMobile;*/
 
     @BindView(R.id.input_lay_password)
     TextInputLayout inputLayPassword;
@@ -81,17 +83,23 @@ public class RegistrationFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        phoneEditText.setDefaultCountry("SG");
+    }
+
     @OnClick(R.id.btn_register)
     public void onRegisterClick() {
         boolean validationSuccess = true;
         inputLayName.setError(null);
         inputLayEmail.setError(null);
-        inputLayMobile.setError(null);
+        phoneEditText.setError(null);
         inputLayPassword.setError(null);
 
         String name = edtName.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
-        String mobile = edtMobile.getText().toString().trim();
+        String mobile = phoneEditText.getPhoneNumber();
         String password = edtPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(name)) {
@@ -106,10 +114,9 @@ public class RegistrationFragment extends Fragment {
                 validationSuccess = false;
             }
         }
-        if (mobile.length() < 8) {
-            inputLayMobile.setError(getResources().getString(R.string.text_invalid_user_number));
+        if (!phoneEditText.isValid()) {
+            phoneEditText.setError(getResources().getString(R.string.text_invalid_user_number));
             if (validationSuccess) {
-                edtMobile.requestFocus();
                 validationSuccess = false;
             }
         }

@@ -3,8 +3,8 @@
 
     <!-- USER AUTH DETAILS -->
     <string name="text_user_name">Your Name</string>
-    <string name="text_user_email">Email Address</string>
     <string name="text_user_mobile">Mobile Number</string>
+    <string name="text_user_email">Email</string>
     <string name="text_user_password">Password</string>
     <string name="text_user_sign_in">SIGN IN</string>
     <string name="text_user_registration">REGISTER</string>
@@ -21,6 +21,8 @@
     <string name="text_invite_user_title">Invite your Companions to\nConnected Life</string>
     <string name="text_invite_user_name">Name</string>
     <string name="text_search_contact">SEARCH CONTACTS</string>
+    <string name="text_search_hint">Search</string>
+    <string name="text_user_invitation_msg_content">Hi %1$s, I would like you to join me on Connected Life! Please download the CoLife app and accept my invitation: url</string>
 
     <!-- UPLOAD AVATAR -->
     <string name="text_avatar_upload_title">Account Created!\nAdd your Profile Photo</string>
@@ -33,12 +35,27 @@
     <string name="text_btn_verify_otp">Verify</string>
     <string name="text_btn_invite">Invite</string>
     <string name="text_btn_next">Next</string>
+    <string name="text_btn_ok">Ok</string>
+    <string name="text_btn_setting">Setting</string>
+    <string name="text_btn_cancel">Cancel</string>
 
     <!-- VALIDATION TEXTS-->
+    <string name="text_loading">Loading</string>
     <string name="text_empty_field">Empty Field</string>
     <string name="text_invalid_user_name">Invalid name</string>
     <string name="text_invalid_user_email">Invalid Email</string>
     <string name="text_invalid_user_number">Invalid Number</string>
     <string name="text_invalid_user_password">Incorrect Password</string>
+    <string name="text_user_acc_not_found">Account Not Found</string>
+
+
+    <!-- ALERT MESSAGE -->
+    <string name="text_alert_user_registered_already">User already registered with this email id or mobile number</string>
+    <string name="text_alert_user_registration_error">Error registering user. Please try again later.</string>
+    <string name="text_alert_verify_otp_error">Error verifying OTP. Please click on RESEND CODE and try again.</string>
+    <string name="text_alert_otp_resend_success">OTP will be send to registered mobile number.</string>
+    <string name="text_alert_user_login_error">Error signin user. Please try again later.</string>
+    <string name="text_alert_user_need_contact_permission">App need permission to access the phone contacts</string>
+
 
 </resources>

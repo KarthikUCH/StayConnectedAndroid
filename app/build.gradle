@@ -54,7 +54,16 @@ dependencies {
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     // extracting file metadata libs
-    compile "com.drewnoakes:metadata-extractor:$metadataExtractorVersion"
+    compile "com.drewnoakes:metadata-extractor:$rootProject.metadataExtractorVersion"
+
+    // Circular image view lib
+    compile "de.hdodenhof:circleimageview:$rootProject.CircularImageViewVersion"
+
+    //https://github.com/lamudi-gmbh/android-phone-field
+    // Phone field library
+    compile('com.lamudi.phonefield:phone-field:0.1.3@aar') {
+        transitive = true
+    }
 
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
     testCompile 'junit:junit:4.12'

@@ -13,11 +13,11 @@ public interface RestServiceFactory {
     /**
      * @see <a herf "https://stackoverflow.com/a/5806384/2790197"> Connect to PC Local host</a>
      */
-    String API_BASE_URL = "http://10.0.2.2:3000";
+    String API_BASE_URL = "http://c9c15ac3.ngrok.io";
 
     <T> T create(Class<T> clazz);
 
-    class Impl implements RestServiceFactory{
+    class Impl implements RestServiceFactory {
         @Override
         public <T> T create(Class<T> clazz) {
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
