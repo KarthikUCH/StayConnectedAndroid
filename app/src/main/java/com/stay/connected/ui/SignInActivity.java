@@ -36,6 +36,8 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     private RegistrationFragment mRegistrationFragment;
     private static ActivityState mActivityState = ActivityState.INACTIVE;
 
+    private static WeakReference<SignInActivity> mReference;
+
     private enum ActivityState {
         REGISTERING,
         SIGNING_IN,
@@ -55,6 +57,7 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
 
         mSignInFragment = SignInFragment.newInstance();
         mRegistrationFragment = RegistrationFragment.newInstance();
+        mReference = new WeakReference<SignInActivity>(this);
 
         showSignInFragment();
     }
@@ -128,61 +131,39 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
     }
 
     @Override
-    public void registerUser(String name, String email, String mobile, String password) {
+    public void registeringUser() {
         mActivityState = ActivityState.REGISTERING;
         showProgressDialog(null, false);
-        mAppController.registerUser(name, email, mobile, password, new UserRegistrationListener(this));
     }
 
-    public void setSignInError(int errorCode) {
-
-        SignInFragment fragment = (SignInFragment) getSupportFragmentManager().findFragmentByTag(SignInFragment.class.getName());
-        if (fragment != null) {
-            fragment.setError(errorCode);
+    @Override
+    public void registrationResponse(Integer responseCode) {
+        resetActivityState();
+        if (mReference.get() != null) {
+            switch (responseCode) {
+                case 200:
+                    mReference.get().startVerifyOtpActivity(true);
+                    break;
+                case 409:
+                    mReference.get().showAlertDialog(R.string.text_alert_user_registered_already);
+                    break;
+                case 400:
+                default:
+                    mReference.get().showAlertDialog(R.string.text_alert_user_registration_error);
+                    break;
+            }
         }
-
     }
 
-    /**
-     * Listen to user registration request
-     */
-    private static class UserRegistrationListener implements ResponseListener<Integer> {
+    @Override
+    public void showRegistrationError(String errorMsg) {
+        resetActivityState();
+    }
 
-        private final WeakReference<SignInActivity> mReference;
-
-        public UserRegistrationListener(SignInActivity activity) {
-            mReference = new WeakReference<SignInActivity>(activity);
-        }
-
-        @Override
-        public void onResponse(Integer responseCode) {
-            if (mReference.get() != null) {
-                switch (responseCode) {
-                    case 200:
-                        mReference.get().startVerifyOtpActivity(true);
-                        break;
-                    case 409:
-                        mReference.get().showAlertDialog(R.string.text_alert_user_registered_already);
-                        break;
-                    case 400:
-                    default:
-                        mReference.get().showAlertDialog(R.string.text_alert_user_registration_error);
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void onError(String errorMessage) {
-
-        }
-
-        @Override
-        public void onCompleted() {
-            mActivityState = ActivityState.INACTIVE;
-            if (mReference.get() != null) {
-                mReference.get().dismissProgressDialog(null);
-            }
+    private void resetActivityState() {
+        mActivityState = ActivityState.INACTIVE;
+        if (mReference.get() != null) {
+            mReference.get().dismissProgressDialog(null);
         }
     }
 
@@ -228,5 +209,14 @@ public class SignInActivity extends InjectableActivity implements RegistrationFr
                 mReference.get().dismissProgressDialog(null);
             }
         }
+    }
+
+    public void setSignInError(int errorCode) {
+
+        SignInFragment fragment = (SignInFragment) getSupportFragmentManager().findFragmentByTag(SignInFragment.class.getName());
+        if (fragment != null) {
+            fragment.setError(errorCode);
+        }
+
     }
 }

@@ -6,6 +6,7 @@ import com.stay.connected.ui.MainActivity;
 import com.stay.connected.ui.SignInActivity;
 import com.stay.connected.ui.UploadAvatarActivity;
 import com.stay.connected.ui.VerifyOtpActivity;
+import com.stay.connected.ui.fragment.RegistrationFragment;
 
 import javax.inject.Singleton;
 
@@ -29,5 +30,7 @@ public interface ApplicationComponent {
     void inject(InviteUserActivity activity);
 
     void inject(UploadAvatarActivity activity);
+
+    void inject(RegistrationFragment fragment);
 
 }

@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 
 import com.stay.connected.network.RestServiceFactory;
+import com.stay.connected.ui.Presenter.IRegistrationPresenter;
+import com.stay.connected.ui.Presenter.RegistrationPresenterImpl;
 
 import javax.inject.Singleton;
 
@@ -45,5 +47,11 @@ public class ApplicationModule {
     @Singleton
     AppController providesAppController(Context context, RestServiceFactory restServiceFactory, AppPreference appPreference) {
         return new AppController(context, restServiceFactory, appPreference);
+    }
+
+    @Provides
+    @Singleton
+    IRegistrationPresenter providesRegistrationPresenter(AppController appController){
+        return new RegistrationPresenterImpl(appController);
     }
 }

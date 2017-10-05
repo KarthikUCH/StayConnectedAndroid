@@ -12,8 +12,14 @@ import android.widget.EditText;
 
 import com.lamudi.phonefield.PhoneInputLayout;
 import com.stay.connected.R;
+import com.stay.connected.application.ApplicationComponent;
+import com.stay.connected.application.StayConnected;
+import com.stay.connected.ui.Presenter.IRegistrationPresenter;
+import com.stay.connected.ui.view.IRegistrationView;
 import com.stay.connected.util.AppUtil;
 import com.stay.connected.widget.PhoneNumberLayout;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,8 +33,10 @@ import butterknife.OnClick;
  * Use the {@link RegistrationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistrationFragment extends Fragment {
+public class RegistrationFragment extends Fragment implements IRegistrationView {
 
+    @Inject
+    IRegistrationPresenter mRegistrationPresenter;
 
     @BindView(R.id.input_lay_name)
     TextInputLayout inputLayName;
@@ -73,6 +81,13 @@ public class RegistrationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        injectComponent(((StayConnected) getActivity().getApplication()).getComponent());
+
+        mRegistrationPresenter.attachView(this);
+    }
+
+    void injectComponent(ApplicationComponent component) {
+        component.inject(this);
     }
 
     @Override
@@ -83,10 +98,34 @@ public class RegistrationFragment extends Fragment {
         return view;
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentRegistrationListener) {
+            mListener = (OnFragmentRegistrationListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentRegistrationListener");
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         phoneEditText.setDefaultCountry("SG");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRegistrationPresenter.detachView();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @OnClick(R.id.btn_register)
@@ -101,57 +140,60 @@ public class RegistrationFragment extends Fragment {
         String email = edtEmail.getText().toString().trim();
         String mobile = phoneEditText.getPhoneNumber();
         String password = edtPassword.getText().toString().trim();
+        mRegistrationPresenter.registerUser(name, email, phoneEditText.isValid(), mobile, password);
+    }
 
-        if (TextUtils.isEmpty(name)) {
-            inputLayName.setError(getResources().getString(R.string.text_invalid_user_name));
+    @Override
+    public void setInvalidName(boolean requestFocus) {
+        inputLayName.setError(getResources().getString(R.string.text_invalid_user_name));
+        if (requestFocus) {
             edtName.requestFocus();
-            validationSuccess = false;
         }
-        if (!AppUtil.verifyUserEmail(email)) {
-            inputLayEmail.setError(getResources().getString(R.string.text_invalid_user_email));
-            if (validationSuccess) {
-                edtEmail.requestFocus();
-                validationSuccess = false;
-            }
-        }
-        if (!phoneEditText.isValid()) {
-            phoneEditText.setError(getResources().getString(R.string.text_invalid_user_number));
-            if (validationSuccess) {
-                validationSuccess = false;
-            }
-        }
-        if (!AppUtil.verifyUserPassword(password)) {
-            inputLayPassword.setError(getResources().getString(R.string.text_invalid_user_password));
-            if (validationSuccess) {
-                edtPassword.requestFocus();
-                validationSuccess = false;
-            }
-        }
+    }
 
-        if (!validationSuccess) {
-            return;
+    @Override
+    public void setInvalidEmail(boolean requestFocus) {
+        phoneEditText.setError(getResources().getString(R.string.text_invalid_user_number));
+        if (requestFocus) {
+            phoneEditText.requestFocus();
         }
+    }
 
+    @Override
+    public void setInvalidNumber(boolean requestFocus) {
+        inputLayPassword.setError(getResources().getString(R.string.text_invalid_user_password));
+        if (requestFocus) {
+            inputLayPassword.requestFocus();
+        }
+    }
+
+    @Override
+    public void setInvalidPassword(boolean requestFocus) {
+        inputLayPassword.setError(getResources().getString(R.string.text_invalid_user_password));
+        if (requestFocus) {
+            inputLayPassword.requestFocus();
+        }
+    }
+
+    @Override
+    public void registeringUser() {
         if (mListener != null) {
-            mListener.registerUser(name, email, mobile, password);
+            mListener.registeringUser();
         }
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentRegistrationListener) {
-            mListener = (OnFragmentRegistrationListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentRegistrationListener");
+    public void registrationResponse(Integer responseCode) {
+        if (mListener != null) {
+            mListener.registrationResponse(responseCode);
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void showRegistrationError(String errorMsg) {
+        if (mListener != null) {
+            mListener.showRegistrationError(errorMsg);
+        }
     }
 
     /**
@@ -166,6 +208,10 @@ public class RegistrationFragment extends Fragment {
      */
     public interface OnFragmentRegistrationListener {
         // TODO: Update argument type and name
-        void registerUser(String name, String email, String mobile, String password);
+        void registeringUser();
+
+        void registrationResponse(Integer responseCode);
+
+        void showRegistrationError(String errorMsg);
     }
 }
